@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">getirApp</string>
+    <string name="products">Ürünler</string>
+    <string name="basket_price">₺0,00</string>
+    <string name="product_name">Product Name</string>
+    <string name="attribute">Attribute</string>
+</resources>
