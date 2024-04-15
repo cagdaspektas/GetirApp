@@ -54,7 +54,7 @@ object NetworkModule {
     fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl("https://espresso-food-delivery-backend-cc3e106e2d34.herokuapp.com") //
+            .baseUrl("https://65c38b5339055e7482c12050.mockapi.io") //
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
