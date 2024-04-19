@@ -4,10 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.example.getirapp.domain.model.ProductItem
 
 class SingleRecylerAdapter<B: ViewBinding,DATA>(
     private val bindingInflater: (LayoutInflater, ViewGroup, Boolean) -> B,
-    private val bind: (B,DATA, Int?) -> Unit
+    private val bind: (B,DATA, Int?) -> Unit,
 ): RecyclerView.Adapter<SingleRecylerAdapter<B,DATA>.BindingViewHolder<B>>()
 {
 
