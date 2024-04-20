@@ -10,4 +10,9 @@
     <string name="add_to_basket_icon">add to basket icon</string>
     <string name="product_detail">Ürün Detayı</string>
     <string name="add_to_basket">Sepete Ekle</string>
+    <string name="basket">Sepetim</string>
+    <string name="suggested_products">Önerilen Ürünler</string>
+    <string name="complete_receipt">Siparişini Tamamla</string>
+    <string name="normal_price"> <strike>₺2.000,00</strike></string>
+    <string name="discount_price">₺1.500,00</string>
 </resources>

@@ -2,9 +2,12 @@ package com.example.getirapp.presentation.product
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -30,9 +33,8 @@ class ProductFragment : Fragment(R.layout.fragment_product) {
     private val viewModel: ProductViewModel by viewModels()
     @Inject
     lateinit var dataStoreManager: DataStoreManager
-    private var isClicked = false
 
-    private val productLinearAdapter = SingleRecylerAdapter<ItemProductCardBinding, ProductItem>(
+    private val productLinearAdapter = SingleRecylerAdapter<ItemProductCardBinding,SuggestedProductItem >(
         { inflater, _, _ ->
             ItemProductCardBinding.inflate(
                 inflater,
@@ -45,90 +47,84 @@ class ProductFragment : Fragment(R.layout.fragment_product) {
                 with(item) {
                     tvPrice.text = priceText.toString()
                     context?.let {
-                        Glide.with(it)
-                            .load(thumbnailURL)
-                            .into(imgProduct)
-
-                    }
-                    tvAttribute.text = attribute
-                    tvName.text = name
-                    itemProduct.setOnClickListener {
-
-                        val action= ProductFragmentDirections.actionProductFragmentToProductFragmentDetail(
-                            thumbnailURL!!,name!!, attribute?:"",priceText.toString()
-                        )
-                        findNavController().navigate(action)
-                    }
-                }
+                        if (imageURL!=null) {
+                            Glide.with(it)
+                                .load(imageURL)
+                                .into(imgProduct)
 
 
-                btnAdd.setOnClickListener {
-                    cardPiece.visibility=View.VISIBLE
-                    btnDelete.visibility=View.VISIBLE
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        dataStoreManager.addProduct(AddedProduct(1,item))
-
-                    }
- }
-                btnDelete.setOnClickListener {
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        dataStoreManager.removeProduct(AddedProduct(1,item))
-
-                    }
-                }
-
-            }
-        }
-    )
-    private val productGradientAdapter = SingleRecylerAdapter<ItemProductCardBinding, SuggestedProductItem?>(
-        { inflater, _, _ ->
-            ItemProductCardBinding.inflate(
-                inflater,
-                binding.rvProductsGradient,
-                false
-            )
-        },
-        { binding, item, position ->
-            binding.apply {
-                with(item!!) {
-                    tvPrice.text = priceText.toString()
-                    context?.let {
-                    if (imageURL!=null) {
-                        Glide.with(it)
-                            .load(imageURL)
-                        .into(imgProduct)
-
-
-                    }
+                        }
                         else {
-                        Glide.with(it)
-                            .load(squareThumbnailURL)
-                            .into(imgProduct)
+                            Glide.with(it)
+                                .load(squareThumbnailURL)
+                                .into(imgProduct)
 
-                    }
+                        }
                     }
                     tvAttribute.text = shortDescription
                     tvName.text = name
+                    // sayfadaki adet alanları gözüksün diye
+                    viewLifecycleOwner.lifecycleScope.launch {
+
+                        dataStoreManager.productList.collect { product ->
+                            product.let { retrievedProduct ->
+                                val existingProductIndex = retrievedProduct.indexOfFirst {
+                                    it.suggestedItem?.id == item.id
+                                }
+
+
+                                if (existingProductIndex != -1) {
+                                    cardPiece.visibility=View.VISIBLE
+                                    btnDelete.visibility=View.VISIBLE
+                                }
+                            }
+                        }
+
+
+                    }
+
                     itemProduct.setOnClickListener {
 
                         val action= ProductFragmentDirections.actionProductFragmentToProductFragmentDetail(
                             imageURL?:squareThumbnailURL!!,name!!, shortDescription?:"",priceText.toString()
                         )
                         findNavController().navigate(action)
-                }
-                btnAdd.setOnClickListener {
-                    cardPiece.visibility=View.VISIBLE
-                    btnDelete.visibility=View.VISIBLE
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        dataStoreManager.productList.collect { product ->
-                        product?.let { retrievedProduct ->
-                            println("Retrieved product: $retrievedProduct")
+                    }
+                    btnAdd.setOnClickListener {
+                        cardPiece.visibility=View.VISIBLE
+                        btnDelete.visibility=View.VISIBLE
+
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            dataStoreManager.addSuggestedItem(AddedProduct(1, suggestedItem = item))
+
+                            dataStoreManager.productList.collect { product ->
+                                product.let { retrievedProduct ->
+                                    val existingProductIndex = retrievedProduct.indexOfFirst {
+                                        it.suggestedItem?.id == item.id
+                                    }
+
+                                    if (existingProductIndex != -1) {
+                                        tvPiece.text = retrievedProduct[existingProductIndex].piece.toString()
+                                    }
+                                }
+                            }
+
+
+                        }
+
+
+                    }
+                    btnDelete.setOnClickListener {
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            if (tvPiece.text == "1") {
+                                cardPiece.visibility=View.GONE
+                                btnDelete.visibility=View.GONE
+                            }
+                            dataStoreManager.removeSuggestedItem(AddedProduct(1, suggestedItem = item))
+
+
                         }
                     }
-                    }
-
-
-                }
 
 
 
@@ -136,8 +132,96 @@ class ProductFragment : Fragment(R.layout.fragment_product) {
 
 
             }
+
+
         }
     )
+    private val productGradientAdapter = SingleRecylerAdapter<ItemProductCardBinding, ProductItem?>(
+        { inflater, _, _ ->
+            ItemProductCardBinding.inflate(
+                inflater,
+                binding.rvProductsGradient,
+                false
+            )
+        }
+    ) { binding, item, position ->
+        binding.apply {
+            with(item!!) {
+                tvPrice.text = priceText
+                context?.let {
+                    Glide.with(it)
+                        .load(thumbnailURL)
+                        .into(imgProduct)
+
+                }
+
+                tvAttribute.text = attribute
+                tvName.text = name
+                itemProduct.setOnClickListener {
+
+                    val action =
+                        ProductFragmentDirections.actionProductFragmentToProductFragmentDetail(
+                            thumbnailURL!!, name!!, attribute ?: "", priceText.toString()
+                        )
+                    findNavController().navigate(action)
+                }
+            }
+            viewLifecycleOwner.lifecycleScope.launch {
+                dataStoreManager.productList.collect { product ->
+                    product.let { retrievedProduct ->
+                        val existingProductIndex = retrievedProduct.indexOfFirst {
+                            it.item?.id == item.id
+                        }
+
+                        if (existingProductIndex != -1) {
+                            cardPiece.visibility = View.VISIBLE
+                            btnDelete.visibility = View.VISIBLE
+                        }
+                    }
+                }
+
+
+            }
+
+            btnAdd.setOnClickListener {
+                cardPiece.visibility = View.VISIBLE
+                btnDelete.visibility = View.VISIBLE
+                viewLifecycleOwner.lifecycleScope.launch {
+                    dataStoreManager.addProductItem(AddedProduct(1, item = item))
+                    dataStoreManager.productList.collect { product ->
+                        product.let { retrievedProduct ->
+                            val existingProductIndex = retrievedProduct.indexOfFirst {
+                                it.item?.id == item.id
+                            }
+
+                            if (existingProductIndex != -1) {
+                                tvPiece.text = retrievedProduct[existingProductIndex].piece.toString()
+                            }
+                        }
+                    }
+
+
+                    }
+                }
+
+
+
+            btnDelete.setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    if (tvPiece.text == "1") {
+                        cardPiece.visibility = View.GONE
+                        btnDelete.visibility = View.GONE
+                    }
+                    dataStoreManager.removeProductItem(AddedProduct(1, item))
+
+
+                }
+            }
+
+        }
+    }
+
+
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -146,15 +230,25 @@ class ProductFragment : Fragment(R.layout.fragment_product) {
         initProduct()
         initSuggestedProducts()
 
+        with(binding){
 
-
-        binding.btnBasket.setOnClickListener {
-
+            lifecycleScope.launch {
+                val initialTotalPrice = dataStoreManager.calculateTotalCost()
+                totalBasket.text = "₺${initialTotalPrice}"
+            }
+            dataStoreManager.totalPriceLiveData.observe(viewLifecycleOwner) { totalPrice ->
+                totalBasket.text ="₺${totalPrice}"
+            }
+            btnBasket.setOnClickListener {
+                findNavController().navigate(R.id.action_productFragment_to_basketFragment)
+            }
         }
+
     }
 
 
     private fun initProduct() = with(viewModel) {
+
         viewModel.fetchProduct()
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -163,14 +257,9 @@ class ProductFragment : Fragment(R.layout.fragment_product) {
                     when (viewState) {
                         is ViewState.Success -> {
                             val response = viewState.result
-
-                            productLinearAdapter.data = response.data[0].products!!
-
-                            binding.rvProductsLinear.adapter = productLinearAdapter
-
-                            productLinearAdapter.apply {
-
-                            }
+                            productGradientAdapter.data = response.data[0].products!!
+                            binding.rvProductsGradient.layoutManager=GridLayoutManager(context,3)
+                            binding.rvProductsGradient.adapter = productGradientAdapter
 
                         }
 
@@ -187,18 +276,27 @@ class ProductFragment : Fragment(R.layout.fragment_product) {
 
                 }
         }
+
+
+
     }
     private fun initSuggestedProducts() = with(viewModel) {
         viewModel.fetchSuggestedProducts()
+
         viewLifecycleOwner.lifecycleScope.launch {
             uiStateSuggestedProduct.flowWithLifecycle(viewLifecycleOwner.lifecycle)
                 .collect { viewState ->
                     when (viewState) {
                         is ViewState.Success -> {
                             val response = viewState.result
-                            productGradientAdapter.data = response.data[0].products!!
-                            binding.rvProductsGradient.layoutManager=GridLayoutManager(context,3)
-                            binding.rvProductsGradient.adapter = productGradientAdapter
+
+                            productLinearAdapter.data = response.data[0].products!!
+
+                            binding.rvProductsLinear.adapter = productLinearAdapter
+
+                            productLinearAdapter.apply {
+
+                            }
 
                         }
 

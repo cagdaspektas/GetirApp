@@ -21,26 +21,30 @@ import dagger.hilt.android.HiltAndroidApp
 @AndroidEntryPoint
 class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
     private val binding by viewBinding(FragmentProductDetailBinding::bind)
-    private val viewModel: ProductViewModel by viewModels()
-    val args: ProductFragmentDetailArgs by navArgs()
+private    val args: ProductFragmentDetailArgs by navArgs()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-with(binding){
-    materialToolbar.setNavigationOnClickListener {
+    with(binding){
+        materialToolbar.setNavigationOnClickListener {
         findNavController().popBackStack()
     }
+
+    btnBasketDetail.setOnClickListener {
+        findNavController().navigate(R.id.action_productFragmentDetail_to_basketFragment)
+    }
+
     context?.let {
         Glide.with(it)
         .load(args.imgUrl)
         .into(imgProduct)
     }
     tvName.text=args.productName
-tvPrice.text=args.price
+    tvPrice.text=args.price
     tvAttribute.text=args.attribute
 
-  btnAddBasketDetail.setOnClickListener {
+    btnAddBasketDetail.setOnClickListener {
     btnLinears.visibility=View.VISIBLE
       btnAddBasketDetail.visibility=View.GONE
       btnBasketDetail.visibility=View.VISIBLE
