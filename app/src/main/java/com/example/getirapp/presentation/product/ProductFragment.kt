@@ -238,10 +238,12 @@ class ProductFragment : Fragment(R.layout.fragment_product) {
 
             lifecycleScope.launch {
                 val initialTotalPrice = dataStoreManager.calculateTotalCost()
-                totalBasket.text = "₺${initialTotalPrice}"
+                totalBasket.text =String.format("₺%.2f", initialTotalPrice)
+
             }
             dataStoreManager.totalPriceLiveData.observe(viewLifecycleOwner) { totalPrice ->
-                totalBasket.text ="₺${totalPrice}"
+                totalBasket.text =String.format("₺%.2f", totalPrice)
+                //"₺${totalPrice}"
             }
             btnBasket.setOnClickListener {
                 findNavController().navigate(R.id.action_productFragment_to_basketFragment)
