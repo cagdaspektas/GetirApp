@@ -76,6 +76,8 @@ class ProductFragment : Fragment(R.layout.fragment_product) {
                                 if (existingProductIndex != -1) {
                                     cardPiece.visibility=View.VISIBLE
                                     btnDelete.visibility=View.VISIBLE
+                                    tvPiece.text = retrievedProduct[existingProductIndex].piece.toString()
+
                                 }
                             }
                         }
@@ -176,6 +178,8 @@ class ProductFragment : Fragment(R.layout.fragment_product) {
                         if (existingProductIndex != -1) {
                             cardPiece.visibility = View.VISIBLE
                             btnDelete.visibility = View.VISIBLE
+                            tvPiece.text = retrievedProduct[existingProductIndex].piece.toString()
+
                         }
                     }
                 }
