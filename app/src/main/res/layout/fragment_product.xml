@@ -18,7 +18,7 @@
         app:titleTextColor="@color/white" >
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/btn_basket"
-            android:layout_width="@dimen/_70sdp"
+            android:layout_width="@dimen/_90sdp"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginHorizontal="10dp"
@@ -37,6 +37,7 @@
                     android:src="@drawable/ic_basket" />
 
                 <TextView
+                    android:id="@+id/total_basket"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/grey"

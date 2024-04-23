@@ -1,5 +1,6 @@
 package com.example.getirapp.presentation.product
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.getirapp.common.domain.ViewState
@@ -30,6 +31,12 @@ class ProductViewModel @Inject constructor(
     private val _uiStateSuggestedProduct:MutableStateFlow<ViewState<BaseResponse.Success<List<SuggestedProducts>>>> =
             MutableStateFlow(ViewState.Loading)
     val uiStateSuggestedProduct = _uiStateSuggestedProduct.asStateFlow()
+
+    val totalPrice: MutableLiveData<Double> by lazy {
+        MutableLiveData<Double>()
+    }
+
+
 
     //get product datas
     fun fetchProduct(){
