@@ -88,7 +88,15 @@ class ProductFragment : Fragment(R.layout.fragment_product) {
                     itemProduct.setOnClickListener {
 
                         val action= ProductFragmentDirections.actionProductFragmentToProductFragmentDetail(
-                            imageURL?:squareThumbnailURL!!,name!!, shortDescription?:"",priceText.toString()
+                            imageURL?:squareThumbnailURL!!,name!!, shortDescription?:"",
+                            priceText.toString(),
+                            true,
+                            item.id!!,
+                            item,
+                            null,
+
+
+
                         )
                         findNavController().navigate(action)
                     }
@@ -163,7 +171,13 @@ class ProductFragment : Fragment(R.layout.fragment_product) {
 
                     val action =
                         ProductFragmentDirections.actionProductFragmentToProductFragmentDetail(
-                            thumbnailURL!!, name!!, attribute ?: "", priceText.toString()
+                            thumbnailURL!!, name!!, attribute ?: "", priceText.toString(),
+                          false,
+                            item.id!!,
+                            null,
+                            item,
+
+
                         )
                     findNavController().navigate(action)
                 }
@@ -300,9 +314,7 @@ class ProductFragment : Fragment(R.layout.fragment_product) {
 
                             binding.rvProductsLinear.adapter = productLinearAdapter
 
-                            productLinearAdapter.apply {
 
-                            }
 
                         }
 

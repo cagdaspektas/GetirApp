@@ -133,12 +133,14 @@ class DataStoreManager(private val dataStore: DataStore<Preferences>) {
         }
     }
 
-
-    suspend fun deleteProduct(product: AddedProduct) {
-        val currentList = productList.first()
-        val updatedList = currentList.toMutableList().apply { remove(product) }
-        saveProductList(updatedList)
+    suspend fun deleteAllProducts() {
+        dataStore.edit { preferences ->
+            preferences.remove(PRODUCT_KEY)
+        }
         calculateTotalCost()
+
     }
+
+
 }
 

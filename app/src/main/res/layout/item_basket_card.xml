@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/item_product"
+        android:id="@+id/item_product_basket"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="5dp"
@@ -20,7 +20,7 @@
             app:cardUseCompatPadding="true">
 
             <ImageView
-                android:id="@+id/img_product"
+                android:id="@+id/img_product_basket"
                 android:layout_width="92dp"
                 android:layout_height="92dp"
                 android:src="@drawable/ic_basket"
@@ -34,7 +34,7 @@
     >
 
     <TextView
-        android:id="@+id/tv_price"
+        android:id="@+id/tv_price_basket"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -44,7 +44,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tv_name"
+        android:id="@+id/tv_name_basket"
         android:layout_width="@dimen/_78sdp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -55,7 +55,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tv_attribute"
+        android:id="@+id/tv_attribute_basket"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -74,7 +74,7 @@
             android:layout_marginEnd="10dp"
             >
             <androidx.cardview.widget.CardView
-                android:id="@+id/btn_delete"
+                android:id="@+id/btn_delete_basket"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:background="@drawable/style_btn_white"
@@ -88,13 +88,13 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/card_piece"
+                android:id="@+id/card_piece_basket"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 app:cardBackgroundColor="@color/purple"
                 >
                 <TextView
-                    android:id="@+id/tv_piece"
+                    android:id="@+id/tv_piece_basket"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -105,7 +105,7 @@
                     />
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
-                android:id="@+id/btn_add"
+                android:id="@+id/btn_add_basket"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:background="@drawable/style_btn_white"

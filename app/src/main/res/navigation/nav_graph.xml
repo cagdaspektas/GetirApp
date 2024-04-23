@@ -39,6 +39,21 @@
         <action
             android:id="@+id/action_productFragmentDetail_to_basketFragment"
             app:destination="@id/basketFragment" />
+        <argument
+            android:name="isSuggested"
+            app:argType="boolean" />
+        <argument
+            android:name="id"
+            app:argType="string" />
+        <argument
+            android:name="suggestedItem"
+            app:argType="com.example.getirapp.domain.model.SuggestedProductItem"
+            app:nullable="true" />
+        <argument
+            android:name="item"
+            app:argType="com.example.getirapp.domain.model.ProductItem"
+            app:nullable="true" />
+
     </fragment>
     <fragment
         android:id="@+id/basketFragment"

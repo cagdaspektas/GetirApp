@@ -1,5 +1,10 @@
 package com.example.getirapp.domain.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+
 data class SuggestedProductItem(
     val category: String?,
     val id: String?,
@@ -11,4 +16,4 @@ data class SuggestedProductItem(
     val squareThumbnailURL: String?,
     val status: Int?,
     val unitPrice: Double?
-)
+) : Parcelable
