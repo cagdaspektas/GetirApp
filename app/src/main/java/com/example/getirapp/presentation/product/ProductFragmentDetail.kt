@@ -91,10 +91,15 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
 
             btnAddBasketDetail.setOnClickListener {
                 btnLinears.visibility = View.VISIBLE
-                btnAddBasketDetail.visibility = View.GONE
+                cardPiece.visibility = View.VISIBLE
+                btnDelete.visibility = View.VISIBLE
+                btnAddDetail.visibility = View.VISIBLE
+
 
                 viewLifecycleOwner.lifecycleScope.launch {
-                    addBasketDetail()
+                    addPiece()
+                    btnAddBasketDetail.visibility = View.GONE
+
 
 
                 }
@@ -115,14 +120,21 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
                 btnAddBasketDetail.visibility = View.VISIBLE
             }
             viewLifecycleOwner.lifecycleScope.launch {
-                dataStoreManager.removeProductItem(AddedProduct(1, args.item))
+                if (args.isSuggested){
+                    dataStoreManager.removeProductItem(AddedProduct(1, suggestedItem =  args.suggestedItem))
+
+                }
+                else{
+                    dataStoreManager.removeProductItem(AddedProduct(1, args.item))
+
+                }
 
             }
 
         }
 
     }
- private suspend fun addBasketDetail(){
+ /*private suspend fun addBasketDetail(){
      dataStoreManager.addSuggestedItem(
          AddedProduct(
              1,
@@ -142,29 +154,52 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
              }
          }
      }
- }
+ }*/
 
     private  suspend fun addPiece(){
-
-        dataStoreManager.addSuggestedItem(
-            AddedProduct(
-                1,
-                suggestedItem = args.suggestedItem
-            )
+if (args.isSuggested){
+    dataStoreManager.addSuggestedItem(
+        AddedProduct(
+            1,
+            suggestedItem = args.suggestedItem
         )
+    )
 
-        dataStoreManager.productList.collect { product ->
-            product.let { retrievedProduct ->
-                val existingProductIndex = retrievedProduct.indexOfFirst {
-                    it.suggestedItem?.id == args.id
-                }
+    dataStoreManager.productList.collect { product ->
+        product.let { retrievedProduct ->
+            val existingProductIndex = retrievedProduct.indexOfFirst {
+                it.suggestedItem?.id == args.id
+            }
 
-                if (existingProductIndex != -1) {
-                  binding.tvPiece.text =
-                        retrievedProduct[existingProductIndex].piece.toString()
-                }
+            if (existingProductIndex != -1) {
+                binding.tvPiece.text =
+                    retrievedProduct[existingProductIndex].piece.toString()
             }
         }
+    }
+}
+        else{
+    dataStoreManager.addSuggestedItem(
+        AddedProduct(
+            1,
+            item = args.item
+        )
+    )
+
+    dataStoreManager.productList.collect { product ->
+        product.let { retrievedProduct ->
+            val existingProductIndex = retrievedProduct.indexOfFirst {
+                it.item?.id == args.item?.id
+            }
+
+            if (existingProductIndex != -1) {
+                binding.tvPiece.text =
+                    retrievedProduct[existingProductIndex].piece.toString()
+            }
+        }
+    }
+        }
+
     }
 
 
@@ -175,10 +210,10 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
 
                 val existingProductIndex = retrievedProduct.indexOfFirst {
                     if (args.isSuggested) {
-                        it.suggestedItem?.id == args.id
+                        it.suggestedItem?.id == args.suggestedItem?.id
 
                     } else {
-                        it.item?.id == args.id
+                        it.item?.id == args.item?.id
                     }
                 }
 

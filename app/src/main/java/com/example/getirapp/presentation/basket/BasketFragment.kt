@@ -257,7 +257,7 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
 
   private  fun goDetail( item: SuggestedProductItem) {
         with(item) {
-            val action = ProductFragmentDirections.actionProductFragmentToProductFragmentDetail(
+            val action = BasketFragmentDirections.actionBasketFragmentToProductFragmentDetail(
                 imageURL ?: squareThumbnailURL!!,
                 name!!,
                 shortDescription ?: "",
