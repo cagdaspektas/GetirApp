@@ -10,7 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.getirapp.R
 import com.example.getirapp.common.domain.ViewState
@@ -23,6 +22,7 @@ import com.example.getirapp.domain.model.ProductItem
 import com.example.getirapp.domain.model.SuggestedProductItem
 import com.example.getirapp.presentation.adapter.SingleRecylerAdapter
 import com.example.getirapp.presentation.product.ProductFragmentDirections
+import com.example.getirapp.util.GeneralFunctions
 import com.wada811.viewbindingktx.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -35,6 +35,8 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
     private val viewModel: BasketViewModel by viewModels()
     @Inject
     lateinit var dataStoreManager: DataStoreManager
+    @Inject
+    lateinit var generalFunctions: GeneralFunctions
 
     private val suggestedLinearAdapter =
         SingleRecylerAdapter<ItemProductCardBinding, SuggestedProductItem>(
@@ -68,62 +70,20 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                         tvName.text = name
                         // sayfadaki adet alanları gözüksün diye
                         viewLifecycleOwner.lifecycleScope.launch {
-
-                            dataStoreManager.productList.collect { product ->
-                                product.let { retrievedProduct ->
-                                    val existingProductIndex = retrievedProduct.indexOfFirst {
-                                        it.suggestedItem?.id == item.id
-                                    }
-
-
-                                    if (existingProductIndex != -1) {
-                                        cardPiece.visibility=View.VISIBLE
-                                        btnDelete.visibility=View.VISIBLE
-                                        tvPiece.text = retrievedProduct[existingProductIndex].piece.toString()
-
-                                    }
-                                }
-                            }
-
-
+                        generalFunctions.getPieceSuggested(item,cardPiece,btnDelete,tvPiece)
                         }
 
                         itemProduct.setOnClickListener {
-
-                            val action= ProductFragmentDirections.actionProductFragmentToProductFragmentDetail(
-                                imageURL?:squareThumbnailURL!!,name!!, shortDescription?:"",
-                                priceText.toString(),
-                                true,
-                                item.id!!,
-                                item,
-                                null,
-
-
-
-                                )
-                            findNavController().navigate(action)
+                         goDetail(item)
                         }
                         btnAdd.setOnClickListener {
                             cardPiece.visibility=View.VISIBLE
                             btnDelete.visibility=View.VISIBLE
 
                             viewLifecycleOwner.lifecycleScope.launch {
-                                dataStoreManager.addSuggestedItem(AddedProduct(1, suggestedItem = item))
 
-                                dataStoreManager.productList.collect { product ->
-                                    product.let { retrievedProduct ->
-                                        val existingProductIndex = retrievedProduct.indexOfFirst {
-                                            it.suggestedItem?.id == item.id
-                                        }
-
-                                        if (existingProductIndex != -1) {
-                                            tvPiece.text = retrievedProduct[existingProductIndex].piece.toString()
-                                        }
-                                    }
-                                }
-
-
-                            }
+                                generalFunctions.addPieceSuggested(item,tvPiece)
+                           }
 
 
                         }
@@ -170,39 +130,16 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                             tvAttributeBasket.text = attribute
                             tvNameBasket.text = name
                             viewLifecycleOwner.lifecycleScope.launch {
-                                dataStoreManager.productList.collect { product ->
-                                    product.let { retrievedProduct ->
-                                        val existingProductIndex = retrievedProduct.indexOfFirst {
-                                            it.item?.id == item.id
-                                        }
 
-                                        if (existingProductIndex != -1) {
-
-                                            tvPieceBasket.text =
-                                                retrievedProduct[existingProductIndex].piece.toString()
-
-                                        }
-                                    }
-                                }
-
+                            generalFunctions.getPieceProduct(item, tvPiece = tvPieceBasket)
 
                             }
 
                             btnAddBasket.setOnClickListener {
 
                                 viewLifecycleOwner.lifecycleScope.launch {
-                                    dataStoreManager.addProductItem(AddedProduct(1, item = item))
-                                    dataStoreManager.productList.collect { product ->
-                                        product.let { retrievedProduct ->
-                                            val existingProductIndex = retrievedProduct.indexOfFirst {
-                                                it.item?.id == item.id
-                                            }
 
-                                            if (existingProductIndex != -1) {
-                                                tvPieceBasket.text = retrievedProduct[existingProductIndex].piece.toString()
-                                            }
-                                        }
-                                    }
+                                generalFunctions.addPieceProduct(item,tvPieceBasket)
 
 
                                 }
@@ -241,39 +178,15 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                             tvAttributeBasket.text = shortDescription
                             tvNameBasket.text = name
                             viewLifecycleOwner.lifecycleScope.launch {
-                                dataStoreManager.productList.collect { product ->
-                                    product.let { retrievedProduct ->
-                                        val existingProductIndex = retrievedProduct.indexOfFirst {
-                                            it.suggestedItem?.id == suggestedItem.id
-                                        }
-
-                                        if (existingProductIndex != -1) {
-
-                                            tvPieceBasket.text =
-                                                retrievedProduct[existingProductIndex].piece.toString()
-
-                                        }
-                                    }
-                                }
+                             generalFunctions.getPieceSuggested(suggestedItem, tvPiece = tvPieceBasket)
 
 
                             }
                             btnAddBasket.setOnClickListener {
 
                                 viewLifecycleOwner.lifecycleScope.launch {
-                                    dataStoreManager.addSuggestedItem(AddedProduct(1, suggestedItem = item))
+                                    generalFunctions.addPieceSuggested(suggestedItem,tvPieceBasket)
 
-                                    dataStoreManager.productList.collect { product ->
-                                        product.let { retrievedProduct ->
-                                            val existingProductIndex = retrievedProduct.indexOfFirst {
-                                                it.suggestedItem?.id == suggestedItem.id
-                                            }
-
-                                            if (existingProductIndex != -1) {
-                                                tvPieceBasket.text = retrievedProduct[existingProductIndex].piece.toString()
-                                            }
-                                        }
-                                    }
 
 
                                 }
@@ -339,7 +252,26 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
         }
 
     }
-private fun deleteAllProduct(){
+
+  private  fun goDetail( item: SuggestedProductItem) {
+        with(item) {
+            val action = ProductFragmentDirections.actionProductFragmentToProductFragmentDetail(
+                imageURL ?: squareThumbnailURL!!,
+                name!!,
+                shortDescription ?: "",
+                priceText.toString(),
+                true,
+                id!!,
+                this,
+                null
+            )
+           findNavController().navigate(action)
+        }
+    }
+
+
+
+    private fun deleteAllProduct(){
     viewLifecycleOwner.lifecycleScope.launch {
         dataStoreManager.deleteAllProducts()
         initSuggestedProducts()

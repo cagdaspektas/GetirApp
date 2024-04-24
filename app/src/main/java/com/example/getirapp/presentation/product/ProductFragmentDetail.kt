@@ -65,30 +65,7 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
 
             viewLifecycleOwner.lifecycleScope.launch {
 
-                dataStoreManager.productList.collect { product ->
-                    product.let { retrievedProduct ->
-
-                        val existingProductIndex = retrievedProduct.indexOfFirst {
-                            if (args.isSuggested) {
-                                it.suggestedItem?.id == args.id
-
-                            } else {
-                                it.item?.id == args.id
-                            }
-                        }
-
-
-                        if (existingProductIndex != -1) {
-                            btnLinears.visibility = View.VISIBLE
-                            btnAddBasketDetail.visibility = View.GONE
-
-                            tvPiece.text = retrievedProduct[existingProductIndex].piece.toString()
-
-                        }
-
-
-                    }
-                }
+                getPiece()
 
 
             }
@@ -98,26 +75,7 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
 
 
                 viewLifecycleOwner.lifecycleScope.launch {
-                    dataStoreManager.addSuggestedItem(
-                        AddedProduct(
-                            1,
-                            suggestedItem = args.suggestedItem
-                        )
-                    )
-
-                    dataStoreManager.productList.collect { product ->
-                        product.let { retrievedProduct ->
-                            val existingProductIndex = retrievedProduct.indexOfFirst {
-                                it.suggestedItem?.id == args.id
-                            }
-
-                            if (existingProductIndex != -1) {
-                                tvPiece.text =
-                                    retrievedProduct[existingProductIndex].piece.toString()
-                            }
-                        }
-                    }
-
+                    addPiece()
 
                 }
 
@@ -126,15 +84,7 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
 
             btnDelete.setOnClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    if (tvPiece.text == "1") {
-                        cardPiece.visibility = View.GONE
-                        btnDelete.visibility = View.GONE
-                        btnAddDetail.visibility = View.GONE
-                        btnAddBasketDetail.visibility = View.VISIBLE
-                    }
-                    dataStoreManager.removeProductItem(AddedProduct(1, args.item))
-
-
+                    deletePiece()
                 }
             }
 
@@ -144,25 +94,7 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
                 btnAddBasketDetail.visibility = View.GONE
 
                 viewLifecycleOwner.lifecycleScope.launch {
-                    dataStoreManager.addSuggestedItem(
-                        AddedProduct(
-                            1,
-                            suggestedItem = args.suggestedItem
-                        )
-                    )
-
-                    dataStoreManager.productList.collect { product ->
-                        product.let { retrievedProduct ->
-                            val existingProductIndex = retrievedProduct.indexOfFirst {
-                                it.suggestedItem?.id == args.id
-                            }
-
-                            if (existingProductIndex != -1) {
-                                tvPiece.text =
-                                    retrievedProduct[existingProductIndex].piece.toString()
-                            }
-                        }
-                    }
+                    addBasketDetail()
 
 
                 }
@@ -172,6 +104,99 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
 
         }
 
+    }
+
+    private fun deletePiece(){
+        with(binding){
+            if (tvPiece.text == "1") {
+                cardPiece.visibility = View.GONE
+                btnDelete.visibility = View.GONE
+                btnAddDetail.visibility = View.GONE
+                btnAddBasketDetail.visibility = View.VISIBLE
+            }
+            viewLifecycleOwner.lifecycleScope.launch {
+                dataStoreManager.removeProductItem(AddedProduct(1, args.item))
+
+            }
+
+        }
+
+    }
+ private suspend fun addBasketDetail(){
+     dataStoreManager.addSuggestedItem(
+         AddedProduct(
+             1,
+             suggestedItem = args.suggestedItem
+         )
+     )
+
+     dataStoreManager.productList.collect { product ->
+         product.let { retrievedProduct ->
+             val existingProductIndex = retrievedProduct.indexOfFirst {
+                 it.suggestedItem?.id == args.id
+             }
+
+             if (existingProductIndex != -1) {
+                 binding.tvPiece.text =
+                     retrievedProduct[existingProductIndex].piece.toString()
+             }
+         }
+     }
+ }
+
+    private  suspend fun addPiece(){
+
+        dataStoreManager.addSuggestedItem(
+            AddedProduct(
+                1,
+                suggestedItem = args.suggestedItem
+            )
+        )
+
+        dataStoreManager.productList.collect { product ->
+            product.let { retrievedProduct ->
+                val existingProductIndex = retrievedProduct.indexOfFirst {
+                    it.suggestedItem?.id == args.id
+                }
+
+                if (existingProductIndex != -1) {
+                  binding.tvPiece.text =
+                        retrievedProduct[existingProductIndex].piece.toString()
+                }
+            }
+        }
+    }
+
+
+
+    private  suspend fun getPiece(){
+        dataStoreManager.productList.collect { product ->
+            product.let { retrievedProduct ->
+
+                val existingProductIndex = retrievedProduct.indexOfFirst {
+                    if (args.isSuggested) {
+                        it.suggestedItem?.id == args.id
+
+                    } else {
+                        it.item?.id == args.id
+                    }
+                }
+
+
+                if (existingProductIndex != -1) {
+                    with(binding){
+                        btnLinears.visibility = View.VISIBLE
+                        btnAddBasketDetail.visibility = View.GONE
+
+                        tvPiece.text = retrievedProduct[existingProductIndex].piece.toString()
+
+                    }
+
+                }
+
+
+            }
+        }
     }
 
 

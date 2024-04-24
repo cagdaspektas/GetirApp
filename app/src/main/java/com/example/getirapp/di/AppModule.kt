@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.getirapp.data.local.DataStoreManager
+import com.example.getirapp.util.GeneralFunctions
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,6 +29,12 @@ class AppModule {
     @Singleton
     fun provideDataStoreManager(dataStore: DataStore<Preferences>): DataStoreManager {
         return DataStoreManager(dataStore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGeneralFunctions(dataStoreManager: DataStoreManager): GeneralFunctions {
+        return GeneralFunctions(dataStoreManager)
     }
 
 

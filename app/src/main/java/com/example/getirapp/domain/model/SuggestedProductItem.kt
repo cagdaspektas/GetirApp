@@ -7,8 +7,8 @@ import kotlinx.parcelize.Parcelize
 
 data class SuggestedProductItem(
     val category: String?,
-    val id: String?,
     val imageURL: String?,
+    val id:String?,
     val name: String?,
     val price: Double?,
     val priceText: String?,
