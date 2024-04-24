@@ -33,7 +33,7 @@ The product's detailed image, name, price, description and current amount in the
 
 ○ When users click the Checkout button, a meaningful success message  displayed on the screen.
 
-○ After the message’s action, all the local data is reset and turn back to the Product Listing Screen. (item counts in the cart must be zero)
+○ After the message’s action, all the local data is reset and turn back to the Product Listing Screen.
 
 ○ Users can not route to the Cart Screen, if the cart is empty.
 
