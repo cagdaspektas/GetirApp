@@ -193,11 +193,24 @@ class ProductFragment : Fragment(R.layout.fragment_product) {
             }
             dataStoreManager.totalPriceLiveData.observe(viewLifecycleOwner) { totalPrice ->
                 totalBasket.text = String.format("₺%.2f", totalPrice)
-                //"₺${totalPrice}"
             }
-            btnBasket.setOnClickListener {
-                findNavController().navigate(R.id.action_productFragment_to_basketFragment)
+
+
+            lifecycleScope.launch {
+                dataStoreManager.productList.collect { product ->
+                    product.let { retrievedProduct ->
+                        if (retrievedProduct.isNotEmpty()) {
+                            btnBasket.setOnClickListener {
+                                findNavController().navigate(R.id.action_productFragment_to_basketFragment)
+                            }
+                        } else {
+                            // Eğer `retrievedProduct` boşsa, düğmenin tıklama işlevini kaldırın
+                            btnBasket.setOnClickListener(null)
+                        }
+                    }
+                }
             }
+
         }
 
     }
