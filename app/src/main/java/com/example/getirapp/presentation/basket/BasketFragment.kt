@@ -95,7 +95,6 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                                 }
                                 dataStoreManager.removeSuggestedItem(AddedProduct(1, suggestedItem = item))
 
-
                             }
                         }
 
@@ -153,6 +152,7 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                                     dataStoreManager.removeProductItem(AddedProduct(1, item))
 
 
+
                                 }
                             }
                         }
@@ -197,10 +197,11 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                                 viewLifecycleOwner.lifecycleScope.launch {
 
                                     dataStoreManager.removeSuggestedItem(AddedProduct(1, suggestedItem = suggestedItem))
-
+                                    initSuggestedProducts()
 
                                 }
                             }
+
                         }
 
                     }
@@ -216,6 +217,7 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initSuggestedProducts()
+
         with(binding) {
             tlbarBasket.setNavigationOnClickListener {
                 findNavController().popBackStack()
@@ -268,6 +270,7 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
            findNavController().navigate(action)
         }
     }
+
 
 
 
