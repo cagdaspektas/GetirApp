@@ -117,6 +117,8 @@
                         android:id="@+id/total_price_basket"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
                         android:layout_marginHorizontal="2dp"
                         android:text="@string/discount_price"
                         android:textColor="@color/purple"
