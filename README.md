@@ -38,3 +38,12 @@ The product's detailed image, name, price, description and current amount in the
 ○ Users can not route to the Cart Screen, if the cart is empty.
 
 ![Screenshot_20240424_190411](https://github.com/cagdaspektas/GetirApp/assets/62350321/7b4d0125-629b-4872-9233-678e8b5b64bb)
+
+
+## Uygulama Tanıtım Videosu
+[video](https://www.loom.com/share/0d4526fe59834d7b8a9f7d2849d3c237)
+
+## Video Of An App
+
+https://github.com/cagdaspektas/GetirApp/assets/62350321/32a48dc4-546a-43e7-94f6-0c018bd7eed5
+
