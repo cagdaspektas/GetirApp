@@ -48,9 +48,21 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
                 findNavController().popBackStack()
             }
 
-            btnBasketDetail.setOnClickListener {
-                findNavController().navigate(R.id.action_productFragmentDetail_to_basketFragment)
+            lifecycleScope.launch {
+                dataStoreManager.productList.collect { product ->
+                    if (product.isNotEmpty()) {
+                        btnBasketDetail.setOnClickListener {
+                            findNavController().navigate(R.id.action_productFragmentDetail_to_basketFragment)
+
+                        }
+                    } else {
+                        btnBasketDetail.setOnClickListener(null)
+
+                    }
+                }
             }
+
+
 
 
 
@@ -101,7 +113,6 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
                     btnAddBasketDetail.visibility = View.GONE
 
 
-
                 }
 
 
@@ -111,8 +122,8 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
 
     }
 
-    private fun deletePiece(){
-        with(binding){
+    private fun deletePiece() {
+        with(binding) {
             if (tvPiece.text == "1") {
                 cardPiece.visibility = View.GONE
                 btnDelete.visibility = View.GONE
@@ -120,11 +131,15 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
                 btnAddBasketDetail.visibility = View.VISIBLE
             }
             viewLifecycleOwner.lifecycleScope.launch {
-                if (args.isSuggested){
-                    dataStoreManager.removeProductItem(AddedProduct(1, suggestedItem =  args.suggestedItem))
+                if (args.isSuggested) {
+                    dataStoreManager.removeProductItem(
+                        AddedProduct(
+                            1,
+                            suggestedItem = args.suggestedItem
+                        )
+                    )
 
-                }
-                else{
+                } else {
                     dataStoreManager.removeProductItem(AddedProduct(1, args.item))
 
                 }
@@ -134,77 +149,75 @@ class ProductFragmentDetail : Fragment(R.layout.fragment_product_detail) {
         }
 
     }
- /*private suspend fun addBasketDetail(){
-     dataStoreManager.addSuggestedItem(
-         AddedProduct(
-             1,
-             suggestedItem = args.suggestedItem
-         )
-     )
-
-     dataStoreManager.productList.collect { product ->
-         product.let { retrievedProduct ->
-             val existingProductIndex = retrievedProduct.indexOfFirst {
-                 it.suggestedItem?.id == args.id
-             }
-
-             if (existingProductIndex != -1) {
-                 binding.tvPiece.text =
-                     retrievedProduct[existingProductIndex].piece.toString()
-             }
-         }
-     }
- }*/
-
-    private  suspend fun addPiece(){
-if (args.isSuggested){
-    dataStoreManager.addSuggestedItem(
-        AddedProduct(
-            1,
-            suggestedItem = args.suggestedItem
+    /*private suspend fun addBasketDetail(){
+        dataStoreManager.addSuggestedItem(
+            AddedProduct(
+                1,
+                suggestedItem = args.suggestedItem
+            )
         )
-    )
 
-    dataStoreManager.productList.collect { product ->
-        product.let { retrievedProduct ->
-            val existingProductIndex = retrievedProduct.indexOfFirst {
-                it.suggestedItem?.id == args.id
-            }
+        dataStoreManager.productList.collect { product ->
+            product.let { retrievedProduct ->
+                val existingProductIndex = retrievedProduct.indexOfFirst {
+                    it.suggestedItem?.id == args.id
+                }
 
-            if (existingProductIndex != -1) {
-                binding.tvPiece.text =
-                    retrievedProduct[existingProductIndex].piece.toString()
-            }
-        }
-    }
-}
-        else{
-    dataStoreManager.addSuggestedItem(
-        AddedProduct(
-            1,
-            item = args.item
-        )
-    )
-
-    dataStoreManager.productList.collect { product ->
-        product.let { retrievedProduct ->
-            val existingProductIndex = retrievedProduct.indexOfFirst {
-                it.item?.id == args.item?.id
-            }
-
-            if (existingProductIndex != -1) {
-                binding.tvPiece.text =
-                    retrievedProduct[existingProductIndex].piece.toString()
+                if (existingProductIndex != -1) {
+                    binding.tvPiece.text =
+                        retrievedProduct[existingProductIndex].piece.toString()
+                }
             }
         }
-    }
+    }*/
+
+    private suspend fun addPiece() {
+        if (args.isSuggested) {
+            dataStoreManager.addSuggestedItem(
+                AddedProduct(
+                    1,
+                    suggestedItem = args.suggestedItem
+                )
+            )
+
+            dataStoreManager.productList.collect { product ->
+                product.let { retrievedProduct ->
+                    val existingProductIndex = retrievedProduct.indexOfFirst {
+                        it.suggestedItem?.id == args.id
+                    }
+
+                    if (existingProductIndex != -1) {
+                        binding.tvPiece.text =
+                            retrievedProduct[existingProductIndex].piece.toString()
+                    }
+                }
+            }
+        } else {
+            dataStoreManager.addSuggestedItem(
+                AddedProduct(
+                    1,
+                    item = args.item
+                )
+            )
+
+            dataStoreManager.productList.collect { product ->
+                product.let { retrievedProduct ->
+                    val existingProductIndex = retrievedProduct.indexOfFirst {
+                        it.item?.id == args.item?.id
+                    }
+
+                    if (existingProductIndex != -1) {
+                        binding.tvPiece.text =
+                            retrievedProduct[existingProductIndex].piece.toString()
+                    }
+                }
+            }
         }
 
     }
 
 
-
-    private  suspend fun getPiece(){
+    private suspend fun getPiece() {
         dataStoreManager.productList.collect { product ->
             product.let { retrievedProduct ->
 
@@ -219,7 +232,7 @@ if (args.isSuggested){
 
 
                 if (existingProductIndex != -1) {
-                    with(binding){
+                    with(binding) {
                         btnLinears.visibility = View.VISIBLE
                         btnAddBasketDetail.visibility = View.GONE
 

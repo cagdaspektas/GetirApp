@@ -1,6 +1,9 @@
 package com.example.getirapp.presentation.basket
 
+import android.app.AlertDialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -33,8 +36,12 @@ import javax.inject.Inject
 class BasketFragment : Fragment(R.layout.fragment_basket) {
     private val binding by viewBinding(FragmentBasketBinding::bind)
     private val viewModel: BasketViewModel by viewModels()
+    private val handler = Handler(Looper.getMainLooper())
+    private var initialTotalPrice: Double = 0.0
+
     @Inject
     lateinit var dataStoreManager: DataStoreManager
+
     @Inject
     lateinit var generalFunctions: GeneralFunctions
 
@@ -52,14 +59,13 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                     with(item) {
                         tvPrice.text = priceText.toString()
                         context?.let {
-                            if (imageURL!=null) {
+                            if (imageURL != null) {
                                 Glide.with(it)
                                     .load(imageURL)
                                     .into(imgProduct)
 
 
-                            }
-                            else {
+                            } else {
                                 Glide.with(it)
                                     .load(squareThumbnailURL)
                                     .into(imgProduct)
@@ -70,34 +76,38 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                         tvName.text = name
                         // sayfadaki adet alanları gözüksün diye
                         viewLifecycleOwner.lifecycleScope.launch {
-                        generalFunctions.getPieceSuggested(item,cardPiece,btnDelete,tvPiece)
+                            generalFunctions.getPieceSuggested(item, cardPiece, btnDelete, tvPiece)
                         }
 
                         itemProduct.setOnClickListener {
-                         goDetail(item)
+                            goDetail(item)
                         }
                         btnAdd.setOnClickListener {
-                            cardPiece.visibility=View.VISIBLE
-                            btnDelete.visibility=View.VISIBLE
+                            cardPiece.visibility = View.VISIBLE
+                            btnDelete.visibility = View.VISIBLE
 
                             viewLifecycleOwner.lifecycleScope.launch {
 
-                                generalFunctions.addPieceSuggested(item,tvPiece)
-                           }
+                                generalFunctions.addPieceSuggested(item, tvPiece)
+                            }
 
 
                         }
                         btnDelete.setOnClickListener {
                             viewLifecycleOwner.lifecycleScope.launch {
                                 if (tvPiece.text == "1") {
-                                    cardPiece.visibility=View.GONE
-                                    btnDelete.visibility=View.GONE
+                                    cardPiece.visibility = View.GONE
+                                    btnDelete.visibility = View.GONE
                                 }
-                                dataStoreManager.removeSuggestedItem(AddedProduct(1, suggestedItem = item))
+                                dataStoreManager.removeSuggestedItem(
+                                    AddedProduct(
+                                        1,
+                                        suggestedItem = item
+                                    )
+                                )
 
                             }
                         }
-
 
 
                     }
@@ -130,7 +140,7 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                             tvNameBasket.text = name
                             viewLifecycleOwner.lifecycleScope.launch {
 
-                            generalFunctions.getPieceProduct(item, tvPiece = tvPieceBasket)
+                                generalFunctions.getPieceProduct(item, tvPiece = tvPieceBasket)
 
                             }
 
@@ -138,7 +148,7 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
 
                                 viewLifecycleOwner.lifecycleScope.launch {
 
-                                generalFunctions.addPieceProduct(item,tvPieceBasket)
+                                    generalFunctions.addPieceProduct(item, tvPieceBasket)
 
 
                                 }
@@ -152,23 +162,20 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                                     dataStoreManager.removeProductItem(AddedProduct(1, item))
 
 
-
                                 }
                             }
                         }
-                    }
-                    else{
-                        with(suggestedItem!!){
+                    } else {
+                        with(suggestedItem!!) {
                             tvPriceBasket.text = priceText.toString()
                             context?.let {
-                                if (imageURL!=null) {
+                                if (imageURL != null) {
                                     Glide.with(it)
                                         .load(imageURL)
                                         .into(imgProductBasket)
 
 
-                                }
-                                else {
+                                } else {
                                     Glide.with(it)
                                         .load(squareThumbnailURL)
                                         .into(imgProductBasket)
@@ -178,15 +185,17 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                             tvAttributeBasket.text = shortDescription
                             tvNameBasket.text = name
                             viewLifecycleOwner.lifecycleScope.launch {
-                             generalFunctions.getPieceSuggested(suggestedItem, tvPiece = tvPieceBasket)
+                                generalFunctions.getPieceSuggested(
+                                    suggestedItem,
+                                    tvPiece = tvPieceBasket
+                                )
 
 
                             }
                             btnAddBasket.setOnClickListener {
 
                                 viewLifecycleOwner.lifecycleScope.launch {
-                                    generalFunctions.addPieceSuggested(suggestedItem,tvPieceBasket)
-
+                                    generalFunctions.addPieceSuggested(suggestedItem, tvPieceBasket)
 
 
                                 }
@@ -196,7 +205,12 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                             btnDeleteBasket.setOnClickListener {
                                 viewLifecycleOwner.lifecycleScope.launch {
 
-                                    dataStoreManager.removeSuggestedItem(AddedProduct(1, suggestedItem = suggestedItem))
+                                    dataStoreManager.removeSuggestedItem(
+                                        AddedProduct(
+                                            1,
+                                            suggestedItem = suggestedItem
+                                        )
+                                    )
                                     initSuggestedProducts()
 
                                 }
@@ -226,7 +240,7 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                 dataStoreManager.productList.collect { product ->
                     product.let { retrievedProduct ->
 
-                        basketAdapter.data= retrievedProduct
+                        basketAdapter.data = retrievedProduct
                         rvBasket.adapter = basketAdapter
 
 
@@ -236,26 +250,28 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
 
             }
             lifecycleScope.launch {
-                val initialTotalPrice = dataStoreManager.calculateTotalCost()
-                totalPriceBasket.text =String.format("₺%.2f", initialTotalPrice)
+                initialTotalPrice = dataStoreManager.calculateTotalCost()
+                totalPriceBasket.text = String.format("₺%.2f", initialTotalPrice)
 
             }
             dataStoreManager.totalPriceLiveData.observe(viewLifecycleOwner) { totalPrice ->
-                totalPriceBasket.text =String.format("₺%.2f", totalPrice)
+                totalPriceBasket.text = String.format("₺%.2f", totalPrice)
             }
             icRubbish.setOnClickListener {
-                deleteAllProduct()
+                backToMainPage()
+
+
             }
 
             btnAddBasketDetail.setOnClickListener {
-                deleteAllProduct()
+              backToMainPage()
             }
 
         }
 
     }
 
-  private  fun goDetail( item: SuggestedProductItem) {
+    private fun goDetail(item: SuggestedProductItem) {
         with(item) {
             val action = BasketFragmentDirections.actionBasketFragmentToProductFragmentDetail(
                 imageURL ?: squareThumbnailURL!!,
@@ -267,19 +283,35 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                 this,
                 null
             )
-           findNavController().navigate(action)
+            findNavController().navigate(action)
         }
     }
 
 
+    private fun deleteAllProduct() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            dataStoreManager.deleteAllProducts()
+            initSuggestedProducts()
 
-
-    private fun deleteAllProduct(){
-    viewLifecycleOwner.lifecycleScope.launch {
-        dataStoreManager.deleteAllProducts()
-        initSuggestedProducts()
-
+        }
     }
+private fun backToMainPage(){
+    handler.postDelayed({
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("İşlem Tamamlandı")
+            .setMessage("İşlem toplamınız ${String.format("₺%.2f", initialTotalPrice)}")
+            .setCancelable(false)
+            .create()
+
+        dialog.show()
+        deleteAllProduct()
+        handler.postDelayed({
+            dialog.cancel()
+            val action =
+                BasketFragmentDirections.actionBasketFragmentToProductFragment2()
+            findNavController().navigate(action)
+        }, 1000)
+    }, 1000)
 }
     private fun initSuggestedProducts() = with(viewModel) {
         viewModel.fetchSuggestedProducts()
@@ -294,7 +326,6 @@ class BasketFragment : Fragment(R.layout.fragment_basket) {
                             suggestedLinearAdapter.data = response.data[0].products!!
 
                             binding.rvSuggested.adapter = suggestedLinearAdapter
-
 
 
                         }
