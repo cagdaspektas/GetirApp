@@ -59,5 +59,9 @@
         android:id="@+id/basketFragment"
         android:name="com.example.getirapp.presentation.basket.BasketFragment"
         android:label="fragment_basket"
-        tools:layout="@layout/fragment_basket" />
+        tools:layout="@layout/fragment_basket" >
+        <action
+            android:id="@+id/action_basketFragment_to_productFragmentDetail"
+            app:destination="@id/productFragmentDetail" />
+    </fragment>
 </navigation>
